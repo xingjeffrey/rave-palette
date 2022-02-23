@@ -1,0 +1,40 @@
+========================================================================================================================
+                                          GSCW-DEFAULT: TRAINING INSTRUCTIONS
+========================================================================================================================
+
+
+TRAIN RAVE
+----------
+
+Train rave (both training stages are included)
+
+python train_rave.py --name gscw-default --wav /home/j8xing/RAVE-morph/rave-palette/data/external/GSCW --preprocessed /home/j8xing/RAVE-morph/rave-palette/data/interim/gscw-default/rave 
+
+You can follow the training using tensorboard
+
+tensorboard --logdir . --bind_all
+
+Once the training has reached a satisfactory state, kill it (ctrl + C)
+
+TRAIN PRIOR
+-----------
+
+Export the latent space trained on gscw-default.
+
+python export_rave.py --run runs/gscw-default/rave --cached false --name gscw-default
+
+Train the prior model.
+
+python train_prior.py --pretrained-vae rave_gscw-default.ts --preprocessed /home/j8xing/RAVE-morph/rave-palette/data/interim/gscw-default/prior --wav /home/j8xing/RAVE-morph/rave-palette/data/external/GSCW --name gscw-default
+
+Once the training has reached a satisfactory state, kill it (ctrl + C)
+
+========================================================================================================================
+                                            EXPORT TO MAX MSP (COMING SOON)
+========================================================================================================================
+
+In order to use both **rave** and the **prior** model inside max/msp, we have to export them using **cached convolutions**.
+
+python export_rave.py --run runs/gscw-default/rave --cached true --name gscw-default_rt
+python export_prior.py --run runs/gscw-default/prior --name gscw-default_rt
+python combine_models.py --prior prior_gscw-default_rt.ts --rave rave_gscw-default_rt.ts --name gscw-default
